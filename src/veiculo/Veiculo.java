@@ -32,5 +32,11 @@ public abstract class Veiculo {
 	public final double calcularTarifaBase(double distanciaKm) {
 		return getTarifaFixa() + getTarifaPorKm() * distanciaKm;
 	}
+	
+	@Override
+	public String toString() {
+		return "Placa: " + placa
+		  + " | Modelo: " + modelo;
+	}
 
 }

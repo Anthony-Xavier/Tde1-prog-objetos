@@ -1,4 +1,4 @@
-package domain;
+package corrida;
 
 import java.time.LocalDateTime;
 

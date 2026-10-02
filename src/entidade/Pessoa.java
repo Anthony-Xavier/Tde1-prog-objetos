@@ -1,12 +1,12 @@
-package domain;
+package entidade;
 
 public abstract class Pessoa {
+
 	private String nome;
 	private String cpf;
 	private String telefone;
 
 	protected Pessoa(String nome, String cpf, String telefone) {
-		super();
 		this.setNome(nome);
 		this.setCpf(cpf);
 		this.setTelefone(telefone);
@@ -20,7 +20,14 @@ public abstract class Pessoa {
 		if (nome == null || nome.isBlank()) {
 			throw new IllegalArgumentException("Nome não pode ser vazio.");
 		}
-		this.nome = nome;
+
+		String nomeLimpo = nome.trim();
+
+		if (!nomeLimpo.matches("[A-Za-zÀ-ÿ ]+")) {
+			throw new IllegalArgumentException("Nome deve conter apenas letras.");
+		}
+
+		this.nome = nomeLimpo;
 	}
 
 	public String getCpf() {
@@ -31,13 +38,15 @@ public abstract class Pessoa {
 		if (cpf == null || cpf.isBlank()) {
 			throw new IllegalArgumentException("CPF não pode ser vazio.");
 		}
+
 		String cpfLimpo = cpf.replaceAll("[.\\-\\s]", "");
-		if (!cpfLimpo.matches("\\d+")) {
-			throw new IllegalArgumentException("CPF deve conter apenas números.");
+
+		if (!cpfLimpo.matches("\\d{11}")) {
+			throw new IllegalArgumentException(
+					"CPF deve conter exatamente 11 números."
+			);
 		}
-		if (cpfLimpo.length() != 11) {
-			throw new IllegalArgumentException("CPF deve conter exatamente 11 dígitos.");
-		}
+
 		this.cpf = cpfLimpo;
 	}
 
@@ -49,13 +58,22 @@ public abstract class Pessoa {
 		if (telefone == null || telefone.isBlank()) {
 			throw new IllegalArgumentException("Telefone não pode ser vazio.");
 		}
+
 		String telefoneLimpo = telefone.replaceAll("[()\\-\\s]", "");
-		if (!telefoneLimpo.matches("\\d+")) {
-			throw new IllegalArgumentException("Telefone deve conter apenas números.");
+
+		if (!telefoneLimpo.matches("\\d{10,11}")) {
+			throw new IllegalArgumentException(
+					"Telefone deve conter apenas números e ter 10 ou 11 dígitos."
+			);
 		}
-		if (telefoneLimpo.length() < 10 || telefoneLimpo.length() > 11) {
-			throw new IllegalArgumentException("Telefone deve ter entre 10 e 11 dígitos.");
-		}
+
 		this.telefone = telefoneLimpo;
+	}
+
+	@Override
+	public String toString() {
+		return "Nome: " + nome
+				+ "\nCPF: " + cpf
+				+ "\nTelefone: " + telefone;
 	}
 }

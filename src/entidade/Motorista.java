@@ -1,11 +1,13 @@
-package domain;
+package entidade;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import corrida.Avaliacao;
 import veiculo.Veiculo;
 
 public class Motorista extends Pessoa {
+
 	private String cnh;
 	private boolean disponivel;
 	private Veiculo veiculo;
@@ -44,5 +46,13 @@ public class Motorista extends Pessoa {
 
 	public void adicionarAvaliacao(Avaliacao avaliacao) {
 		avaliacoes.add(avaliacao);
+	}
+
+	@Override
+	public String toString() {
+		return super.toString()
+				+ "\nCNH: " + cnh
+				+ "\nDisponível: " + (disponivel ? "Sim" : "Não")
+				+ "\nVeículo: " + veiculo;
 	}
 }
