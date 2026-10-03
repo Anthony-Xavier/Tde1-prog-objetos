@@ -53,7 +53,8 @@ public class MenuPrincipal extends Menu {
 		case 3:
 			MenuConsultas consultas = new MenuConsultas(
 					cadastroPassageiros,
-					cadastroMotoristas
+					cadastroMotoristas,
+					gerenciadorCorridas
 			);
 
 			consultas.mostrar();

@@ -106,4 +106,8 @@ public class GerenciadorCorridas {
 
 		return resultado;
 	}
+
+	public List<Corrida> listarTodas() {
+		return corridas;
+	}
 }

@@ -83,6 +83,24 @@ public class MenuCorridas extends Menu {
 
 	private void solicitarCorrida() {
 
+		boolean podeSolicitar = true;
+
+		if (cadastroPassageiros.listarTodos().isEmpty()) {
+			System.out.println(
+					"Cadastre pelo menos um passageiro antes de solicitar uma corrida.");
+			podeSolicitar = false;
+		}
+
+		if (cadastroMotoristas.listarDisponiveis().isEmpty()) {
+			System.out.println(
+					"Cadastre pelo menos um motorista disponível antes de solicitar uma corrida.");
+			podeSolicitar = false;
+		}
+
+		if (!podeSolicitar) {
+			return;
+		}
+
 		String cpf = leitorDados.lerCpf("CPF do passageiro: ");
 
 		Passageiro passageiro =
@@ -128,7 +146,7 @@ public class MenuCorridas extends Menu {
 			System.out.println(e.getMessage());
 		}
 	}
-
+	
 	private void aceitarCorrida() {
 
 		List<Corrida> solicitadas =
