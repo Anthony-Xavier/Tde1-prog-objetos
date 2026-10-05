@@ -3,6 +3,7 @@ package cadastro;
 import java.util.ArrayList;
 import java.util.List;
 
+import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import veiculo.Veiculo;
 
@@ -55,6 +56,20 @@ public class CadastroMotoristas {
 		}
 
 		return disponiveis;
+	}
+
+	public List<Motorista> listarDisponiveisPorCategoria(CategoriaCorrida categoria) {
+
+		List<Motorista> compativeis = new ArrayList<>();
+
+		for (Motorista motorista : listarDisponiveis()) {
+
+			if (categoria.isVeiculoCompativel(motorista.getVeiculo())) {
+				compativeis.add(motorista);
+			}
+		}
+
+		return compativeis;
 	}
 	
 	

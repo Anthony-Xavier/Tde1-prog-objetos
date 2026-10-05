@@ -81,13 +81,18 @@ public class MenuConsultas extends Menu {
 			System.out.println("Destino: " + corrida.getDestino());
 			System.out.println("Distância: " + corrida.getDistanciaEstimada() + " km");
 			System.out.println("Categoria: " + corrida.getCategoria().getNome());
+			System.out.println("Forma de pagamento: " + corrida.getFormaPagamento().getDescricao());
 			System.out.println("Estado: " + corrida.getEstado());
 
 			if (corrida.getMotorista() != null) {
 				System.out.println("Motorista: " + corrida.getMotorista().getNome());
+				System.out.println("Veículo: " + corrida.getVeiculo());
+				System.out.println("Valor: " + String.format("R$ %.2f", corrida.getValorFinal()));
 			}
 			else {
 				System.out.println("Motorista: Não definido");
+				System.out.println("Veículo: Não definido");
+				System.out.println("Valor: A definir");
 			}
 		}
 
@@ -104,6 +109,14 @@ public class MenuConsultas extends Menu {
 		if (passageiro != null) {
 			System.out.println();
 			System.out.println(passageiro);
+
+			for (Corrida corrida : passageiro.getHistorico()) {
+				System.out.println(
+						"  Corrida " + corrida.getId()
+						+ " | " + corrida.getOrigem() + " -> " + corrida.getDestino()
+						+ " | " + corrida.getEstado()
+				);
+			}
 		}
 		else {
 			System.out.println("Passageiro não encontrado.");

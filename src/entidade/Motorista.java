@@ -48,11 +48,38 @@ public class Motorista extends Pessoa {
 		avaliacoes.add(avaliacao);
 	}
 
+	public double calcularMediaAvaliacoes() {
+
+		if (avaliacoes.isEmpty()) {
+			return 0;
+		}
+
+		double soma = 0;
+
+		for (Avaliacao avaliacao : avaliacoes) {
+			soma += avaliacao.getNota();
+		}
+
+		return soma / avaliacoes.size();
+	}
+
 	@Override
 	public String toString() {
+
+		String media;
+
+		if (avaliacoes.isEmpty()) {
+			media = "Sem avaliações";
+		}
+		else {
+			media = String.format("%.1f", calcularMediaAvaliacoes())
+					+ " (" + avaliacoes.size() + " avaliações)";
+		}
+
 		return super.toString()
 				+ "\nCNH: " + cnh
 				+ "\nDisponível: " + (disponivel ? "Sim" : "Não")
-				+ "\nVeículo: " + veiculo;
+				+ "\nVeículo: " + veiculo
+				+ "\nMédia de avaliações: " + media;
 	}
 }

@@ -22,4 +22,9 @@ public class Van extends Veiculo {
 		return 3;
 	}
 
+	@Override
+	public String getTipo() {
+		return "Van";
+	}
+
 }

@@ -32,6 +32,7 @@ public class GerenciadorCorridas {
 		);
 
 		corridas.add(corrida);
+		passageiro.adicionarCorrida(corrida);
 		proximoId++;
 
 		return corrida;
@@ -91,6 +92,17 @@ public class GerenciadorCorridas {
 		}
 
 		corrida.cancelar();
+	}
+
+	public void avaliarMotorista(int id, Avaliacao avaliacao) {
+
+		Corrida corrida = buscarPorId(id);
+
+		if (corrida == null) {
+			throw new IllegalArgumentException("Corrida não encontrada.");
+		}
+
+		corrida.avaliar(avaliacao);
 	}
 
 	public List<Corrida> listarPorEstado(EstadoCorrida estado) {
