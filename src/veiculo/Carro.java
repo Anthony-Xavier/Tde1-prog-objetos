@@ -21,4 +21,9 @@ public class Carro extends Veiculo {
 		return 2;
 	}
 
+	@Override
+	public String getTipo() {
+		return "Carro";
+	}
+
 }

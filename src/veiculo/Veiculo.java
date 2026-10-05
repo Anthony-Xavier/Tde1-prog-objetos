@@ -29,13 +29,16 @@ public abstract class Veiculo {
 
 	public abstract int getNivelConforto();
 
+	public abstract String getTipo();
+
 	public final double calcularTarifaBase(double distanciaKm) {
 		return getTarifaFixa() + getTarifaPorKm() * distanciaKm;
 	}
 	
 	@Override
 	public String toString() {
-		return "Placa: " + placa
+		return getTipo()
+		  + " | Placa: " + placa
 		  + " | Modelo: " + modelo;
 	}
 
