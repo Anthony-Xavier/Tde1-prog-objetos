@@ -13,7 +13,11 @@ public class Avaliacao {
 			throw new IllegalArgumentException("Nota deve estar entre 1 e 5.");
 		}
 		this.nota = nota;
-		this.comentario = comentario;
+		if (comentario == null || comentario.isBlank()) {
+			this.comentario = null;
+		} else {
+			this.comentario = comentario;
+		}
 		this.data = LocalDateTime.now();
 	}
 

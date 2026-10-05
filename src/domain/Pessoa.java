@@ -27,7 +27,7 @@ public abstract class Pessoa {
 		return cpf;
 	}
 
-	public void setCpf(String cpf) {
+	private void setCpf(String cpf) {
 		if (cpf == null || cpf.isBlank()) {
 			throw new IllegalArgumentException("CPF não pode ser vazio.");
 		}
