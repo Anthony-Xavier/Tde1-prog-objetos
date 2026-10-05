@@ -108,6 +108,11 @@ public class Corrida {
 			throw new IllegalStateException("Esse motorista não está disponível no momento.");
 		}
 
+		if (!categoria.isVeiculoCompativel(motorista.getVeiculo())) {
+			throw new IllegalStateException("O veículo desse motorista não é compatível com a categoria "
+					+ categoria.getNome() + ".");
+		}
+
 		this.motorista = motorista;
 		this.veiculo = motorista.getVeiculo();
 		this.estado = EstadoCorrida.ACEITA;

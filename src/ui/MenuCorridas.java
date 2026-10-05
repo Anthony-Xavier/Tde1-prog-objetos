@@ -170,6 +170,7 @@ public class MenuCorridas extends Menu {
 					"ID: " + corrida.getId()
 					+ " | Origem: " + corrida.getOrigem()
 					+ " | Destino: " + corrida.getDestino()
+					+ " | Categoria: " + corrida.getCategoria().getNome()
 			);
 		}
 
@@ -191,15 +192,19 @@ public class MenuCorridas extends Menu {
 		}
 
 		List<Motorista> disponiveis =
-				cadastroMotoristas.listarDisponiveis();
+				cadastroMotoristas.listarDisponiveisPorCategoria(
+						corrida.getCategoria());
 
 		if (disponiveis.isEmpty()) {
-			System.out.println("Não existem motoristas disponíveis.");
+			System.out.println(
+					"Não existem motoristas disponíveis com veículo compatível com a categoria "
+					+ corrida.getCategoria().getNome() + ".");
 			return;
 		}
 
 		System.out.println();
-		System.out.println("Motoristas disponíveis:");
+		System.out.println("Motoristas disponíveis para a categoria "
+				+ corrida.getCategoria().getNome() + ":");
 
 		for (Motorista motorista : disponiveis) {
 			System.out.println(motorista);
