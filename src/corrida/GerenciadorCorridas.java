@@ -94,6 +94,17 @@ public class GerenciadorCorridas {
 		corrida.cancelar();
 	}
 
+	public void avaliarMotorista(int id, Avaliacao avaliacao) {
+
+		Corrida corrida = buscarPorId(id);
+
+		if (corrida == null) {
+			throw new IllegalArgumentException("Corrida não encontrada.");
+		}
+
+		corrida.avaliar(avaliacao);
+	}
+
 	public List<Corrida> listarPorEstado(EstadoCorrida estado) {
 
 		List<Corrida> resultado = new ArrayList<>();

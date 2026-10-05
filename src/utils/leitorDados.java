@@ -76,6 +76,11 @@ public class leitorDados {
 		}
 	}
 
+	public static String lerTextoOpcional(String mensagem) {
+		System.out.print(mensagem);
+		return teclado.nextLine().trim();
+	}
+
 	public static int lerInt(String mensagem) {
 
 		while (true) {

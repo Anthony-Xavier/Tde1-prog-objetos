@@ -20,6 +20,7 @@ public class Corrida {
 	private EstadoCorrida estado;
 	private double valorBase;
 	private double valorFinal;
+	private Avaliacao avaliacao;
 
 	public Corrida(int id, Passageiro passageiro, String origem, String destino,
 			double distanciaEstimada, CategoriaCorrida categoria, FormaPagamento formaPagamento) {
@@ -92,6 +93,10 @@ public class Corrida {
 
 	public double getValorFinal() {
 		return valorFinal;
+	}
+
+	public Avaliacao getAvaliacao() {
+		return avaliacao;
 	}
 	
 	public void aceitar(Motorista motorista) {
@@ -167,6 +172,21 @@ public class Corrida {
 		if (motorista != null) {
 			motorista.ficarDisponivel();
 		}
+	}
+
+	public void avaliar(Avaliacao avaliacao) {
+
+		if (estado != EstadoCorrida.FINALIZADA) {
+			throw new IllegalStateException("Só é possível avaliar o motorista de uma corrida finalizada.");
+		}
+
+		if (this.avaliacao != null) {
+			throw new IllegalStateException("Essa corrida já foi avaliada.");
+		}
+
+		this.avaliacao = avaliacao;
+
+		motorista.adicionarAvaliacao(avaliacao);
 	}
 
 }

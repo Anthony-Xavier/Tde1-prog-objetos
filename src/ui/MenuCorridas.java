@@ -8,6 +8,7 @@ import categoria.CategoriaConforto;
 import categoria.CategoriaCorrida;
 import categoria.CategoriaEconomica;
 import categoria.CategoriaPremium;
+import corrida.Avaliacao;
 import corrida.Corrida;
 import corrida.EstadoCorrida;
 import corrida.GerenciadorCorridas;
@@ -467,7 +468,60 @@ public class MenuCorridas extends Menu {
 
 	private void avaliarMotorista() {
 
-		System.out.println(
-				"Avaliação de motorista ainda não implementada.");
+		List<Corrida> finalizadas =
+				gerenciadorCorridas.listarPorEstado(
+						EstadoCorrida.FINALIZADA);
+
+		boolean existeSemAvaliacao = false;
+
+		for (Corrida corrida : finalizadas) {
+
+			if (corrida.getAvaliacao() == null) {
+				existeSemAvaliacao = true;
+			}
+		}
+
+		if (!existeSemAvaliacao) {
+			System.out.println(
+					"Não existem corridas finalizadas para avaliar.");
+			return;
+		}
+
+		System.out.println();
+		System.out.println("Corridas finalizadas sem avaliação:");
+
+		for (Corrida corrida : finalizadas) {
+
+			if (corrida.getAvaliacao() == null) {
+
+				System.out.println(
+						"ID: " + corrida.getId()
+						+ " | Passageiro: " + corrida.getPassageiro().getNome()
+						+ " | Motorista: " + corrida.getMotorista().getNome()
+				);
+			}
+		}
+
+		int id =
+				leitorDados.lerInt("ID da corrida: ");
+
+		int nota =
+				leitorDados.lerInt("Nota (1 a 5): ");
+
+		String comentario =
+				leitorDados.lerTextoOpcional("Comentário (opcional): ");
+
+		try {
+
+			Avaliacao avaliacao = new Avaliacao(nota, comentario);
+
+			gerenciadorCorridas.avaliarMotorista(id, avaliacao);
+
+			System.out.println("Motorista avaliado com sucesso.");
+
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
