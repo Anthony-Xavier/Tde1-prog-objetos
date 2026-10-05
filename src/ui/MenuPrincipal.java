@@ -1,6 +1,19 @@
 package ui;
 
+import sistema.Empresa;
+
 public class MenuPrincipal extends Menu {
+
+	private final MenuCadastros cadastros;
+	private final MenuCorridas corridas;
+	private final MenuConsultas consultas;
+
+	public MenuPrincipal(Empresa empresa) {
+		super(empresa);
+		this.cadastros = new MenuCadastros(empresa);
+		this.corridas = new MenuCorridas(empresa);
+		this.consultas = new MenuConsultas(empresa);
+	}
 
 	@Override
 	protected void mostrarOpcoes() {
@@ -17,15 +30,12 @@ public class MenuPrincipal extends Menu {
 	protected void receberResposta(int resposta) {
 		switch(resposta) {
 		case 1:
-			MenuCadastros cadastros = new MenuCadastros();
 			cadastros.mostrar();
 			break;
 		case 2:
-			MenuCorridas corridas = new MenuCorridas();
 			corridas.mostrar();
 			break;
 		case 3:
-			MenuConsultas consultas = new MenuConsultas();
 			consultas.mostrar();
 			break;
 		default:
