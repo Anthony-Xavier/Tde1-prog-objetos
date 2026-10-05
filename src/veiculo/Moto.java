@@ -7,6 +7,11 @@ public class Moto extends Veiculo {
 	}
 
 	@Override
+	public String getTipo() {
+		return "Moto";
+	}
+
+	@Override
 	protected double getTarifaFixa() {
 		return 3.0;
 	}

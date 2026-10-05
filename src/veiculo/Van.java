@@ -7,6 +7,11 @@ public class Van extends Veiculo {
 	}
 
 	@Override
+	public String getTipo() {
+		return "Van";
+	}
+
+	@Override
 	protected double getTarifaFixa() {
 		return 8;
 	}
