@@ -1,6 +1,6 @@
 package pagamento;
 
-public class Dinheiro implements FormaPagamento{
+public class Dinheiro implements FormaPagamento {
 
 	@Override
 	public String getDescricao() {
