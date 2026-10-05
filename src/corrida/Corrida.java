@@ -113,6 +113,16 @@ public class Corrida {
 		this.estado = EstadoCorrida.ACEITA;
 
 		motorista.ficarIndisponivel();
+
+		calcularValor();
+	}
+
+	private void calcularValor() {
+		valorBase = veiculo.calcularTarifaBase(distanciaEstimada);
+
+		double valorComCategoria = categoria.aplicarAcrescimo(valorBase);
+
+		valorFinal = formaPagamento.aplicarValor(valorComCategoria);
 	}
 
 	public void iniciar() {

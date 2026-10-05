@@ -231,6 +231,8 @@ public class MenuCorridas extends Menu {
 			);
 
 			System.out.println("Corrida aceita com sucesso.");
+			System.out.println("Valor estimado: "
+					+ String.format("R$ %.2f", corrida.getValorFinal()));
 
 		}
 		catch (Exception e) {
@@ -312,7 +314,16 @@ public class MenuCorridas extends Menu {
 
 			gerenciadorCorridas.finalizarCorrida(id);
 
+			Corrida corrida = gerenciadorCorridas.buscarPorId(id);
+
 			System.out.println("Corrida finalizada com sucesso.");
+			System.out.println("Valor da corrida: "
+					+ String.format("R$ %.2f", corrida.getValorBase()));
+			System.out.println("Categoria: " + corrida.getCategoria().getNome());
+			System.out.println("Forma de pagamento: "
+					+ corrida.getFormaPagamento().getDescricao());
+			System.out.println("Valor final: "
+					+ String.format("R$ %.2f", corrida.getValorFinal()));
 
 		}
 		catch (Exception e) {
