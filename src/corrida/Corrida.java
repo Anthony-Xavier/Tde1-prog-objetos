@@ -30,6 +30,12 @@ public class Corrida {
 		if (distanciaEstimada <= 0) {
 			throw new IllegalArgumentException("Distância estimada deve ser maior que zero.");
 		}
+		if (categoria == null) {
+			throw new IllegalArgumentException("Corrida precisa de uma categoria.");
+		}
+		if (formaPagamento == null) {
+			throw new IllegalArgumentException("Corrida precisa de uma forma de pagamento.");
+		}
 		this.id = id;
 		this.passageiro = passageiro;
 		this.origem = origem;

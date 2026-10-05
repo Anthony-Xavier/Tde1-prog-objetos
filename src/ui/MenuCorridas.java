@@ -13,7 +13,10 @@ import corrida.EstadoCorrida;
 import corrida.GerenciadorCorridas;
 import entidade.Motorista;
 import entidade.Passageiro;
+import pagamento.Cartao;
+import pagamento.Dinheiro;
 import pagamento.FormaPagamento;
+import pagamento.Pix;
 import utils.leitorDados;
 
 public class MenuCorridas extends Menu {
@@ -419,7 +422,31 @@ public class MenuCorridas extends Menu {
 
 	private FormaPagamento selecionarFormaPagamento() {
 
-		return null;
+		while (true) {
+
+			System.out.println();
+			System.out.println("1 - Pix");
+			System.out.println("2 - Cartão");
+			System.out.println("3 - Dinheiro");
+
+			int opcao =
+					leitorDados.lerInt("Forma de pagamento: ");
+
+			switch (opcao) {
+
+			case 1:
+				return new Pix();
+
+			case 2:
+				return new Cartao();
+
+			case 3:
+				return new Dinheiro();
+
+			default:
+				System.out.println("Forma de pagamento inválida.");
+			}
+		}
 	}
 
 	private void avaliarMotorista() {
