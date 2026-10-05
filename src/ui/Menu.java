@@ -1,10 +1,8 @@
 package ui;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import utils.leitorDados;
 
 public abstract class Menu {
-	protected static final Scanner teclado = new Scanner(System.in);
 
 	protected abstract void mostrarOpcoes();
 	protected abstract void receberResposta(int resposta);
@@ -32,14 +30,7 @@ public abstract class Menu {
 			this.mostrarVoltar();
 			this.mostrarDivisor();
 			
-			int resposta;
-			try {
-				resposta = teclado.nextInt();
-			} catch(InputMismatchException e) {
-				teclado.nextLine();
-				System.out.println("Resposta inválida.");
-				continue;
-			}
+			int resposta = leitorDados.lerInt("Opção: ");
 			
 			if (resposta == 0) {
 				break;
