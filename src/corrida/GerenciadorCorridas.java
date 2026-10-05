@@ -32,6 +32,7 @@ public class GerenciadorCorridas {
 		);
 
 		corridas.add(corrida);
+		passageiro.adicionarCorrida(corrida);
 		proximoId++;
 
 		return corrida;

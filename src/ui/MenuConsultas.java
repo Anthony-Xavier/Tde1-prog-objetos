@@ -104,6 +104,14 @@ public class MenuConsultas extends Menu {
 		if (passageiro != null) {
 			System.out.println();
 			System.out.println(passageiro);
+
+			for (Corrida corrida : passageiro.getHistorico()) {
+				System.out.println(
+						"  Corrida " + corrida.getId()
+						+ " | " + corrida.getOrigem() + " -> " + corrida.getDestino()
+						+ " | " + corrida.getEstado()
+				);
+			}
 		}
 		else {
 			System.out.println("Passageiro não encontrado.");

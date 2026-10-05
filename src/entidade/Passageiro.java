@@ -13,6 +13,14 @@ public class Passageiro extends Pessoa {
 		super(nome, cpf, telefone);
 	}
 	
+	public List<Corrida> getHistorico() {
+		return historico;
+	}
+
+	public void adicionarCorrida(Corrida corrida) {
+		historico.add(corrida);
+	}
+
 	@Override
 	public String toString() {
 		return super.toString()
