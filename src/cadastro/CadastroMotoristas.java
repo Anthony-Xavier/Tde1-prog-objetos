@@ -28,6 +28,10 @@ public class CadastroMotoristas {
 		return null;
 	}
 
+	public List<Motorista> listarTodos() {
+		return new ArrayList<>(motoristas);
+	}
+
 	public boolean veiculoJaVinculado(Veiculo veiculo) {
 
 		for (Motorista motorista : motoristas) {
