@@ -54,7 +54,7 @@ public class CadastroMotoristas {
 
 		for (Motorista motorista : motoristas) {
 
-			if (motorizta.isDisponivel()) {
+			if (motorista.isDisponivel()) {
 				disponiveis.add(motorista);
 			}
 		}
