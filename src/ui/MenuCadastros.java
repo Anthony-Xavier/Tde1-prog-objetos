@@ -34,6 +34,7 @@ public class MenuCadastros extends Menu {
     private final CadastroPassageiros cadastroPassageiros;
     private final CadastroMotoristas cadastroMotoristas;
     private final CadastroVeiculos cadastroVeiculos;
+    private final JComboBox<Veiculo> veiculoMotorista = new JComboBox<>();
 
     private final DefaultTableModel passageirosModel = modelo("Nome", "CPF", "Telefone");
     private final DefaultTableModel motoristasModel = modelo("Nome", "CPF", "Telefone", "CNH", "Veículo");
@@ -83,17 +84,16 @@ public class MenuCadastros extends Menu {
         JTextField cpf = new JTextField(22);
         JTextField telefone = new JTextField(22);
         JTextField cnh = new JTextField(22);
-        JComboBox<Veiculo> veiculo = new JComboBox<>();
-        atualizarComboVeiculos(veiculo);
-        veiculo.setRenderer((list, value, index, selected, focus) -> new JLabel(value == null ? "Cadastre um veículo" : value.toString()));
-        JPanel form = formulario(new String[] {"Nome:", "CPF:", "Telefone:", "CNH:", "Veículo:"}, nome, cpf, telefone, cnh, veiculo);
+        atualizarComboVeiculos(veiculoMotorista);
+        veiculoMotorista.setRenderer((list, value, index, selected, focus) -> new JLabel(value == null ? "Cadastre um veículo" : value.toString()));
+        JPanel form = formulario(new String[] {"Nome:", "CPF:", "Telefone:", "CNH:", "Veículo:"}, nome, cpf, telefone, cnh, veiculoMotorista);
         JButton salvar = new JButton("Cadastrar motorista");
         salvar.addActionListener(event -> executar(() -> {
             exigirTexto(nome.getText(), "Nome");
             String cpfLimpo = normalizarCpf(cpf.getText());
             exigirTexto(telefone.getText(), "Telefone");
             exigirTexto(cnh.getText(), "CNH");
-            Veiculo selecionado = (Veiculo) veiculo.getSelectedItem();
+            Veiculo selecionado = (Veiculo) veiculoMotorista.getSelectedItem();
             if (selecionado == null) throw new IllegalArgumentException("Cadastre um veículo antes do motorista.");
             if (cadastroMotoristas.consultarPorCpf(cpfLimpo) != null) throw new IllegalArgumentException("Já existe motorista com esse CPF.");
             if (cadastroMotoristas.veiculoJaVinculado(selecionado)) throw new IllegalArgumentException("Esse veículo já está associado a outro motorista.");
@@ -130,6 +130,7 @@ public class MenuCadastros extends Menu {
             cadastroVeiculos.cadastrar(novo);
             placa.setText(""); modelo.setText("");
             atualizarTabelas();
+            atualizarComboVeiculos(veiculoMotorista);
             mensagem("Veículo cadastrado.");
         }));
         JPanel painel = new JPanel(new BorderLayout(8, 8));
