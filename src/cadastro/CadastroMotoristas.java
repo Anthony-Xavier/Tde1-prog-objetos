@@ -28,6 +28,10 @@ public class CadastroMotoristas {
 		return null;
 	}
 
+	public List<Motorista> listarTodos() {
+		return motoristas;
+	}
+
 	public boolean veiculoJaVinculado(Veiculo veiculo) {
 
 		for (Motorista motorista : motoristas) {
@@ -50,7 +54,7 @@ public class CadastroMotoristas {
 
 		for (Motorista motorista : motoristas) {
 
-			if (motorista.isDisponivel()) {
+			if (motorizta.isDisponivel()) {
 				disponiveis.add(motorista);
 			}
 		}
