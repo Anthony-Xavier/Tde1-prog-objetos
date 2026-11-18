@@ -20,4 +20,11 @@ public class MenuCorridas extends Menu {
         setSize(1200, 700);
         setLocationRelativeTo(null);
     }
+
+    @Override
+    public void mostrar() {
+        setSize(1200, 700);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
 }

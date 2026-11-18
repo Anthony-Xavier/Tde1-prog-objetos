@@ -22,7 +22,6 @@ import utils.Dados;
 public class MenuPrincipal extends Menu {
     private static final long serialVersionUID = 1L;
 
-    // Recupera os dados gravados na execução anterior (se existirem).
     private final Dados dados = Dados.ler();
     private final CadastroPassageiros cadastroPassageiros = dados.getCadastroPassageiros();
     private final CadastroMotoristas cadastroMotoristas = dados.getCadastroMotoristas();
@@ -56,7 +55,6 @@ public class MenuPrincipal extends Menu {
         setContentPane(painel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        // Ao fechar a janela principal, grava os dados no arquivo.
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

@@ -11,10 +11,16 @@ import java.io.Serializable;
 import cadastro.CadastroMotoristas;
 import cadastro.CadastroPassageiros;
 import cadastro.CadastroVeiculos;
+import categoria.CategoriaEconomica;
+import corrida.Corrida;
 import corrida.GerenciadorCorridas;
+import entidade.Motorista;
+import entidade.Passageiro;
+import pagamento.Pix;
+import veiculo.Carro;
+import veiculo.Van;
+import veiculo.Veiculo;
 
-// Guarda todos os dados do sistema em um único objeto,
-// para que tudo seja gravado e lido de um único arquivo.
 public class Dados implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -42,7 +48,6 @@ public class Dados implements Serializable {
 		return gerenciadorCorridas;
 	}
 
-	// Lê os dados do arquivo. Se o arquivo não existir, devolve dados vazios.
 	public static Dados ler() {
 		Dados dados = new Dados();
 		File f = new File(ARQUIVO);
@@ -57,9 +62,32 @@ public class Dados implements Serializable {
 			} catch (IOException | ClassNotFoundException e) {
 				System.out.println("Erro lendo " + ARQUIVO + ": " + e.getMessage());
 			}
+		} else {
+			dados.carregarDadosPadrao();
 		}
 
 		return dados;
+	}
+
+	private void carregarDadosPadrao() {
+		Veiculo carro = new Carro("BBB2222", "Fiat Argo");
+		cadastroVeiculos.cadastrar(carro);
+
+		Motorista ana = new Motorista("Ana Souza", "22222222222", "54999990002", "22222", carro);
+		cadastroMotoristas.cadastrar(ana);
+
+		Veiculo van = new Van("CCC3333", "Mercedes Sprinter");
+		cadastroVeiculos.cadastrar(van);
+
+		Motorista carlos = new Motorista("Carlos Lima", "33333333333", "54999990003", "33333", van);
+		cadastroMotoristas.cadastrar(carlos);
+
+		Passageiro pedro = new Passageiro("Pedro Santos", "55555555555", "54999990005");
+		cadastroPassageiros.cadastrar(pedro);
+
+		Corrida corrida = gerenciadorCorridas.solicitarCorrida(pedro, "Rodoviária", "Aeroporto", 15,
+				new CategoriaEconomica(), new Pix());
+		corrida.aceitar(ana);
 	}
 
 	public void gravar() {
