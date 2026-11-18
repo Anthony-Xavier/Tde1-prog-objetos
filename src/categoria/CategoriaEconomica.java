@@ -1,6 +1,10 @@
 package categoria;
 
-public class CategoriaEconomica implements CategoriaCorrida {
+import java.io.Serializable;
+
+public class CategoriaEconomica implements CategoriaCorrida, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getNome() {

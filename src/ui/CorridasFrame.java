@@ -1,8 +1,11 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -10,10 +13,12 @@ import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -39,6 +44,7 @@ import corrida.EstadoCorrida;
 import corrida.GerenciadorCorridas;
 import entidade.Motorista;
 import entidade.Passageiro;
+import entidade.Pessoa;
 import pagamento.Cartao;
 import pagamento.Dinheiro;
 import pagamento.FormaPagamento;
@@ -81,7 +87,8 @@ public class CorridasFrame extends JFrame {
         @Override public boolean isCellEditable(int row, int column) { return false; }
     };
     private final JTable corridasTable = new JTable(corridasModel);
-    private final JLabel detalhes = new JLabel("Selecione uma corrida para consultar custo e avaliação.");
+    private final JTabbedPane abas = new JTabbedPane();
+    private final JLabel detalhes = new JLabel("Clique em uma corrida para ver custo e avaliação e alterar o status.");
 
     public CorridasFrame(GerenciadorCorridas gerenciador,
             CadastroPassageiros cadastroPassageiros, CadastroMotoristas cadastroMotoristas) {
@@ -95,7 +102,6 @@ public class CorridasFrame extends JFrame {
         setLocationRelativeTo(null);
         configurarSeletores();
 
-        JTabbedPane abas = new JTabbedPane();
         abas.addTab("Solicitar corrida", criarAbaSolicitacao());
         abas.addTab("Aceitar corrida", criarAbaAceitacao());
         abas.addTab("Corridas / status / avaliação", criarAbaGerenciamento());
@@ -104,23 +110,61 @@ public class CorridasFrame extends JFrame {
     }
 
     private void configurarSeletores() {
-        passageirosCombo.setRenderer((list, value, index, selected, focus) ->
-                new JLabel(value == null ? "Selecione um passageiro" : value.getNome() + " | CPF: " + value.getCpf()));
-        motoristasCombo.setRenderer((list, value, index, selected, focus) ->
-                new JLabel(value == null ? "Selecione um motorista" : value.getNome() + " | CPF: " + value.getCpf()));
-        categoriaCombo.setRenderer((list, value, index, selected, focus) -> new JLabel(value == null ? "" : value.getNome()));
-        pagamentoCombo.setRenderer((list, value, index, selected, focus) -> new JLabel(value == null ? "" : value.getDescricao()));
+        passageirosCombo.setRenderer(new TextoRenderer("Selecione um passageiro"));
+        motoristasCombo.setRenderer(new TextoRenderer("Selecione um motorista"));
+        categoriaCombo.setRenderer(new TextoRenderer(""));
+        pagamentoCombo.setRenderer(new TextoRenderer(""));
 
         adicionarFiltro(pesquisaPassageiro, passageirosCombo, cadastroPassageiros::listarTodos, Passageiro::getNome);
-        adicionarFiltro(pesquisaMotorista, motoristasCombo, cadastroMotoristas::listarDisponiveis, Motorista::getNome);
+        pesquisaMotorista.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent event) { atualizarMotoristasElegiveis(); }
+            @Override public void removeUpdate(DocumentEvent event) { atualizarMotoristasElegiveis(); }
+            @Override public void changedUpdate(DocumentEvent event) { atualizarMotoristasElegiveis(); }
+        });
         passageirosCombo.addActionListener(event -> {
             Passageiro passageiro = (Passageiro) passageirosCombo.getSelectedItem();
             cpfPassageiro.setText("CPF: " + (passageiro == null ? "—" : passageiro.getCpf()));
         });
         motoristasCombo.addActionListener(event -> {
             Motorista motorista = (Motorista) motoristasCombo.getSelectedItem();
-            cpfMotorista.setText("CPF: " + (motorista == null ? "—" : motorista.getCpf()));
+            if (motorista != null) {
+                cpfMotorista.setText("CPF: " + motorista.getCpf() + avisoOcupados());
+            }
         });
+    }
+
+    private String avisoOcupados() {
+        int ocupados = cadastroMotoristas.listarTodos().size() - cadastroMotoristas.listarDisponiveis().size();
+        if (ocupados == 0) {
+            return "";
+        }
+        return "  (" + ocupados + " em corrida, fora da lista)";
+    }
+
+    private static class TextoRenderer extends DefaultListCellRenderer {
+        private static final long serialVersionUID = 1L;
+        private String textoVazio;
+
+        public TextoRenderer(String textoVazio) {
+            this.textoVazio = textoVazio;
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> lista, Object valor, int indice,
+                boolean selecionado, boolean comFoco) {
+            super.getListCellRendererComponent(lista, valor, indice, selecionado, comFoco);
+            if (valor == null) {
+                setText(textoVazio);
+            } else if (valor instanceof Pessoa) {
+                Pessoa pessoa = (Pessoa) valor;
+                setText(pessoa.getNome() + " | CPF: " + pessoa.getCpf());
+            } else if (valor instanceof CategoriaCorrida) {
+                setText(((CategoriaCorrida) valor).getNome());
+            } else if (valor instanceof FormaPagamento) {
+                setText(((FormaPagamento) valor).getDescricao());
+            }
+            return this;
+        }
     }
 
     private <T> void adicionarFiltro(JTextField campo, JComboBox<T> combo,
@@ -210,13 +254,14 @@ public class CorridasFrame extends JFrame {
         painel.add(detalhes, BorderLayout.NORTH);
         painel.add(new JScrollPane(corridasTable), BorderLayout.CENTER);
 
+        corridasTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirOpcoesCorrida();
+            }
+        });
+
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        adicionarBotao(botoes, "Iniciar", "iniciar");
-        adicionarBotao(botoes, "Finalizar", "finalizar");
-        adicionarBotao(botoes, "Cancelar", "cancelar");
-        JButton avaliar = new JButton("Avaliar");
-        avaliar.addActionListener(event -> avaliarSelecionada());
-        botoes.add(avaliar);
         JButton atualizar = new JButton("Atualizar");
         atualizar.addActionListener(event -> atualizarTabelas());
         botoes.add(atualizar);
@@ -224,10 +269,45 @@ public class CorridasFrame extends JFrame {
         return painel;
     }
 
-    private void adicionarBotao(JPanel painel, String texto, String acao) {
-        JButton botao = new JButton(texto);
-        botao.addActionListener(event -> alterarEstado(acao));
-        painel.add(botao);
+    private void abrirOpcoesCorrida() {
+        Corrida corrida = selecionada(corridasTable);
+        if (corrida == null) {
+            return;
+        }
+
+        String custo = "A definir";
+        if (corrida.getMotorista() != null) {
+            custo = moeda(corrida.getValorFinal());
+        }
+
+        String avaliacao = "Ainda não avaliada";
+        if (corrida.getAvaliacao() != null) {
+            avaliacao = corrida.getAvaliacao().getNota() + "/5";
+            if (!corrida.getAvaliacao().getComentario().isEmpty()) {
+                avaliacao = avaliacao + " - " + corrida.getAvaliacao().getComentario();
+            }
+        }
+
+        String mensagem = "Corrida #" + corrida.getId()
+                + "\nStatus: " + corrida.getEstado()
+                + "\nCusto: " + custo
+                + "\nAvaliação: " + avaliacao
+                + "\n\nO que deseja fazer?";
+
+        String[] opcoes = {"Iniciar", "Finalizar", "Cancelar corrida", "Avaliar", "Fechar"};
+
+        int escolha = JOptionPane.showOptionDialog(abas, mensagem, "Corrida #" + corrida.getId(),
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[4]);
+
+        if (escolha == 0) {
+            alterarEstado("iniciar");
+        } else if (escolha == 1) {
+            alterarEstado("finalizar");
+        } else if (escolha == 2) {
+            alterarEstado("cancelar");
+        } else if (escolha == 3) {
+            avaliarSelecionada();
+        }
     }
 
     private void solicitarCorrida() {
@@ -263,7 +343,14 @@ public class CorridasFrame extends JFrame {
         motoristasCombo.setModel(model);
         if (model.getSize() > 0) motoristasCombo.setSelectedIndex(0);
         Motorista motorista = (Motorista) motoristasCombo.getSelectedItem();
-        cpfMotorista.setText("CPF: " + (motorista == null ? "—" : motorista.getCpf()));
+        if (motorista != null) {
+            cpfMotorista.setText("CPF: " + motorista.getCpf() + avisoOcupados());
+        } else if (corrida == null) {
+            cpfMotorista.setText("Selecione uma corrida solicitada na tabela.");
+        } else {
+            cpfMotorista.setText("Nenhum motorista disponível para a categoria "
+                    + corrida.getCategoria().getNome() + "." + avisoOcupados());
+        }
     }
 
     private void aceitarCorrida() {
@@ -304,13 +391,16 @@ public class CorridasFrame extends JFrame {
                     motorista == null ? "A definir" : moeda(corrida.getValorFinal()), textoAvaliacao});
         }
         if (idSelecionado > 0) selecionarPorId(idSelecionado);
+        if (solicitadasTable.getRowCount() > 0) {
+            solicitadasTable.setRowSelectionInterval(0, 0);
+        }
         atualizarMotoristasElegiveis();
         mostrarDetalhes();
     }
 
     private void mostrarDetalhes() {
         Corrida corrida = selecionada(corridasTable);
-        if (corrida == null) { detalhes.setText("Selecione uma corrida para consultar custo e avaliação."); return; }
+        if (corrida == null) { detalhes.setText("Clique em uma corrida para ver custo e avaliação e alterar o status."); return; }
         String custo = corrida.getMotorista() == null ? "A definir" : moeda(corrida.getValorFinal());
         Avaliacao avaliacao = corrida.getAvaliacao();
         String avaliacaoTexto = avaliacao == null ? "Ainda não avaliada"
@@ -347,7 +437,7 @@ public class CorridasFrame extends JFrame {
         form.add(linha, BorderLayout.NORTH);
         form.add(new JScrollPane(comentario), BorderLayout.CENTER);
         form.setBorder(BorderFactory.createTitledBorder("Comentário (opcional)"));
-        if (JOptionPane.showConfirmDialog(this, form, "Avaliar corrida #" + corrida.getId(),
+        if (JOptionPane.showConfirmDialog(abas, form, "Avaliar corrida #" + corrida.getId(),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) return;
         try {
             gerenciador.avaliarMotorista(corrida.getId(),
@@ -386,6 +476,6 @@ public class CorridasFrame extends JFrame {
     }
 
     private void informar(String mensagem) {
-        JOptionPane.showMessageDialog(this, mensagem, "Corridas", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(abas, mensagem, "Corridas", JOptionPane.INFORMATION_MESSAGE);
     }
 }

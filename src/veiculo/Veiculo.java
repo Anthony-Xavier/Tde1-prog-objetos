@@ -1,6 +1,10 @@
 package veiculo;
 
-public abstract class Veiculo {
+import java.io.Serializable;
+
+public abstract class Veiculo implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String placa;
 	private String modelo;

@@ -1,5 +1,7 @@
 package cadastro;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +9,9 @@ import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import veiculo.Veiculo;
 
-public class CadastroMotoristas {
+public class CadastroMotoristas implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<Motorista> motoristas = new ArrayList<>();
 
