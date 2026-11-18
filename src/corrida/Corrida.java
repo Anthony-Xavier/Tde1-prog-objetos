@@ -1,12 +1,16 @@
 package corrida;
 
+import java.io.Serializable;
+
 import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import entidade.Passageiro;
 import pagamento.FormaPagamento;
 import veiculo.Veiculo;
 
-public class Corrida {
+public class Corrida implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private int id;
 	private Passageiro passageiro;

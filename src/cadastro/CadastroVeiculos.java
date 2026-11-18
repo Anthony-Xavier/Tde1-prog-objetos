@@ -1,11 +1,15 @@
 package cadastro;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import veiculo.Veiculo;
 
-public class CadastroVeiculos {
+public class CadastroVeiculos implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<Veiculo> veiculos = new ArrayList<>();
 

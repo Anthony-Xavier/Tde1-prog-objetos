@@ -1,5 +1,7 @@
 package corrida;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,9 @@ import entidade.Motorista;
 import entidade.Passageiro;
 import pagamento.FormaPagamento;
 
-public class GerenciadorCorridas {
+public class GerenciadorCorridas implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<Corrida> corridas = new ArrayList<>();
 	private int proximoId = 1;

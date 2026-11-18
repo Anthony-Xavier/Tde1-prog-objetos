@@ -3,6 +3,8 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -81,7 +83,7 @@ public class CorridasFrame extends JFrame {
         @Override public boolean isCellEditable(int row, int column) { return false; }
     };
     private final JTable corridasTable = new JTable(corridasModel);
-    private final JLabel detalhes = new JLabel("Selecione uma corrida para consultar custo e avaliação.");
+    private final JLabel detalhes = new JLabel("Clique em uma corrida para ver custo e avaliação e alterar o status.");
 
     public CorridasFrame(GerenciadorCorridas gerenciador,
             CadastroPassageiros cadastroPassageiros, CadastroMotoristas cadastroMotoristas) {
@@ -210,13 +212,15 @@ public class CorridasFrame extends JFrame {
         painel.add(detalhes, BorderLayout.NORTH);
         painel.add(new JScrollPane(corridasTable), BorderLayout.CENTER);
 
+        // Ao clicar em uma corrida da tabela, abre as opções dela.
+        corridasTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                abrirOpcoesCorrida();
+            }
+        });
+
         JPanel botoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        adicionarBotao(botoes, "Iniciar", "iniciar");
-        adicionarBotao(botoes, "Finalizar", "finalizar");
-        adicionarBotao(botoes, "Cancelar", "cancelar");
-        JButton avaliar = new JButton("Avaliar");
-        avaliar.addActionListener(event -> avaliarSelecionada());
-        botoes.add(avaliar);
         JButton atualizar = new JButton("Atualizar");
         atualizar.addActionListener(event -> atualizarTabelas());
         botoes.add(atualizar);
@@ -224,10 +228,46 @@ public class CorridasFrame extends JFrame {
         return painel;
     }
 
-    private void adicionarBotao(JPanel painel, String texto, String acao) {
-        JButton botao = new JButton(texto);
-        botao.addActionListener(event -> alterarEstado(acao));
-        painel.add(botao);
+    // Mostra o custo e a avaliação da corrida clicada e permite alterar o status.
+    private void abrirOpcoesCorrida() {
+        Corrida corrida = selecionada(corridasTable);
+        if (corrida == null) {
+            return;
+        }
+
+        String custo = "A definir";
+        if (corrida.getMotorista() != null) {
+            custo = moeda(corrida.getValorFinal());
+        }
+
+        String avaliacao = "Ainda não avaliada";
+        if (corrida.getAvaliacao() != null) {
+            avaliacao = corrida.getAvaliacao().getNota() + "/5";
+            if (!corrida.getAvaliacao().getComentario().isEmpty()) {
+                avaliacao = avaliacao + " - " + corrida.getAvaliacao().getComentario();
+            }
+        }
+
+        String mensagem = "Corrida #" + corrida.getId()
+                + "\nStatus: " + corrida.getEstado()
+                + "\nCusto: " + custo
+                + "\nAvaliação: " + avaliacao
+                + "\n\nO que deseja fazer?";
+
+        String[] opcoes = {"Iniciar", "Finalizar", "Cancelar corrida", "Avaliar", "Fechar"};
+
+        int escolha = JOptionPane.showOptionDialog(this, mensagem, "Corrida #" + corrida.getId(),
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, opcoes, opcoes[4]);
+
+        if (escolha == 0) {
+            alterarEstado("iniciar");
+        } else if (escolha == 1) {
+            alterarEstado("finalizar");
+        } else if (escolha == 2) {
+            alterarEstado("cancelar");
+        } else if (escolha == 3) {
+            avaliarSelecionada();
+        }
     }
 
     private void solicitarCorrida() {
@@ -310,7 +350,7 @@ public class CorridasFrame extends JFrame {
 
     private void mostrarDetalhes() {
         Corrida corrida = selecionada(corridasTable);
-        if (corrida == null) { detalhes.setText("Selecione uma corrida para consultar custo e avaliação."); return; }
+        if (corrida == null) { detalhes.setText("Clique em uma corrida para ver custo e avaliação e alterar o status."); return; }
         String custo = corrida.getMotorista() == null ? "A definir" : moeda(corrida.getValorFinal());
         Avaliacao avaliacao = corrida.getAvaliacao();
         String avaliacaoTexto = avaliacao == null ? "Ainda não avaliada"

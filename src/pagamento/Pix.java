@@ -1,6 +1,10 @@
 package pagamento;
 
-public class Pix implements FormaPagamento {
+import java.io.Serializable;
+
+public class Pix implements FormaPagamento, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public String getDescricao() {
