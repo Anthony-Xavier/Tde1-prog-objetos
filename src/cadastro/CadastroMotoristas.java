@@ -6,75 +6,81 @@ import java.util.List;
 import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import veiculo.Veiculo;
+import exceptions.CadastroDuplicadoException;
 
 public class CadastroMotoristas {
 
-	private List<Motorista> motoristas = new ArrayList<>();
+    private List<Motorista> motoristas = new ArrayList<>();
 
-	public Motorista cadastrar(Motorista motorista) {
-		motoristas.add(motorista);
-		return motorista;
-	}
+    public Motorista cadastrar(Motorista motorista) {
 
-	public Motorista consultarPorCpf(String cpf) {
+        if (consultarPorCpf(motorista.getCpf()) != null) {
+            throw new CadastroDuplicadoException(
+                "Já existe um motorista cadastrado com o CPF: "
+                + motorista.getCpf()
+            );
+        }
 
-		for (Motorista motorista : motoristas) {
+        motoristas.add(motorista);
+        return motorista;
+    }
 
-			if (motorista.getCpf().equals(cpf)) {
-				return motorista;
-			}
-		}
+    public Motorista consultarPorCpf(String cpf) {
 
-		return null;
-	}
+        for (Motorista motorista : motoristas) {
 
-	public List<Motorista> listarTodos() {
-		return motoristas;
-	}
+            if (motorista.getCpf().equals(cpf)) {
+                return motorista;
+            }
+        }
 
-	public boolean veiculoJaVinculado(Veiculo veiculo) {
+        return null;
+    }
 
-		for (Motorista motorista : motoristas) {
+    public List<Motorista> listarTodos() {
+        return motoristas;
+    }
 
-			if (motorista.getVeiculo() != null
-					&& motorista.getVeiculo().getPlaca()
-							.equalsIgnoreCase(veiculo.getPlaca())) {
+    public boolean veiculoJaVinculado(Veiculo veiculo) {
 
-				return true;
-			}
-		}
+        for (Motorista motorista : motoristas) {
 
-		return false;
-	}	
-	
+            if (motorista.getVeiculo() != null
+                    && motorista.getVeiculo().getPlaca()
+                            .equalsIgnoreCase(veiculo.getPlaca())) {
 
-	public List<Motorista> listarDisponiveis() {
+                return true;
+            }
+        }
 
-		List<Motorista> disponiveis = new ArrayList<>();
+        return false;
+    }
 
-		for (Motorista motorista : motoristas) {
+    public List<Motorista> listarDisponiveis() {
 
-			if (motorista.isDisponivel()) {
-				disponiveis.add(motorista);
-			}
-		}
+        List<Motorista> disponiveis = new ArrayList<>();
 
-		return disponiveis;
-	}
+        for (Motorista motorista : motoristas) {
 
-	public List<Motorista> listarDisponiveisPorCategoria(CategoriaCorrida categoria) {
+            if (motorista.isDisponivel()) {
+                disponiveis.add(motorista);
+            }
+        }
 
-		List<Motorista> compativeis = new ArrayList<>();
+        return disponiveis;
+    }
 
-		for (Motorista motorista : listarDisponiveis()) {
+    public List<Motorista> listarDisponiveisPorCategoria(CategoriaCorrida categoria) {
 
-			if (categoria.isVeiculoCompativel(motorista.getVeiculo())) {
-				compativeis.add(motorista);
-			}
-		}
+        List<Motorista> compativeis = new ArrayList<>();
 
-		return compativeis;
-	}
-	
-	
+        for (Motorista motorista : listarDisponiveis()) {
+
+            if (categoria.isVeiculoCompativel(motorista.getVeiculo())) {
+                compativeis.add(motorista);
+            }
+        }
+
+        return compativeis;
+    }
 }
