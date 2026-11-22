@@ -1,3 +1,4 @@
+
 package ui;
 
 import java.awt.BorderLayout;
@@ -22,7 +23,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -39,6 +39,11 @@ import corrida.EstadoCorrida;
 import corrida.GerenciadorCorridas;
 import entidade.Motorista;
 import entidade.Passageiro;
+import exceptions.AvaliacaoInvalidaException;
+import exceptions.CorridaNaoEncontradaException;
+import exceptions.MotoristaIndisponivelException;
+import exceptions.TransicaoCorridaInvalidaException;
+import exceptions.VeiculoIndisponivelException;
 import pagamento.Cartao;
 import pagamento.Dinheiro;
 import pagamento.FormaPagamento;
@@ -46,6 +51,7 @@ import pagamento.Pix;
 
 /** Tela Swing para solicitação e gerenciamento de corridas. */
 public class CorridasFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
     private final GerenciadorCorridas gerenciador;
     private final CadastroPassageiros cadastroPassageiros;
     private final CadastroMotoristas cadastroMotoristas;
@@ -248,7 +254,7 @@ public class CorridasFrame extends JFrame {
                     + " (CPF " + passageiro.getCpf() + ").");
             origem.setText(""); destino.setText(""); distancia.setText("");
             atualizarTabelas();
-        } catch (RuntimeException exception) { informar(exception.getMessage()); }
+        } catch (RuntimeException exception) { informarErro(exception.getMessage()); }
     }
 
     private void atualizarMotoristasElegiveis() {
@@ -276,7 +282,12 @@ public class CorridasFrame extends JFrame {
             informar("Corrida aceita. Motorista: " + motorista.getNome() + " (CPF " + motorista.getCpf()
                     + "). Custo estimado: " + moeda(corrida.getValorFinal()));
             atualizarTabelas();
-        } catch (RuntimeException exception) { informar(exception.getMessage()); }
+        } catch (CorridaNaoEncontradaException | MotoristaIndisponivelException
+                | VeiculoIndisponivelException | TransicaoCorridaInvalidaException exception) {
+            informarErro(exception.getMessage());
+        } catch (RuntimeException exception) {
+            informarErro(exception.getMessage());
+        }
     }
 
     private void atualizarTabelas() {
@@ -331,7 +342,11 @@ public class CorridasFrame extends JFrame {
             }
             atualizarTabelas();
             selecionarPorId(corrida.getId());
-        } catch (RuntimeException exception) { informar(exception.getMessage()); }
+        } catch (CorridaNaoEncontradaException | TransicaoCorridaInvalidaException exception) {
+            informarErro(exception.getMessage());
+        } catch (RuntimeException exception) {
+            informarErro(exception.getMessage());
+        }
     }
 
     private void avaliarSelecionada() {
@@ -353,8 +368,12 @@ public class CorridasFrame extends JFrame {
             gerenciador.avaliarMotorista(corrida.getId(),
                     new Avaliacao(Integer.parseInt(nota.getText().trim()), comentario.getText().trim()));
             atualizarTabelas(); selecionarPorId(corrida.getId());
+        } catch (NumberFormatException exception) {
+            informarErro("A nota deve ser um inteiro entre 1 e 5.");
+        } catch (AvaliacaoInvalidaException | CorridaNaoEncontradaException exception) {
+            informarErro(exception.getMessage());
         } catch (RuntimeException exception) {
-            informar(exception instanceof NumberFormatException ? "A nota deve ser um inteiro entre 1 e 5." : exception.getMessage());
+            informarErro(exception.getMessage());
         }
     }
 
@@ -387,5 +406,9 @@ public class CorridasFrame extends JFrame {
 
     private void informar(String mensagem) {
         JOptionPane.showMessageDialog(this, mensagem, "Corridas", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void informarErro(String mensagem) {
+        JOptionPane.showMessageDialog(this, mensagem, "Erro na corrida", JOptionPane.ERROR_MESSAGE);
     }
 }

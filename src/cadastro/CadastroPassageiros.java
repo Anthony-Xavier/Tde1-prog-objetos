@@ -4,29 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import entidade.Passageiro;
+import exceptions.CadastroDuplicadoException;
 
 public class CadastroPassageiros {
 
-	private List<Passageiro> passageiros = new ArrayList<>();
+    private List<Passageiro> passageiros = new ArrayList<>();
 
-	public Passageiro cadastrar(Passageiro passageiro) {
-		passageiros.add(passageiro);
-		return passageiro;
-	}
+    public Passageiro cadastrar(Passageiro passageiro) {
 
-	public Passageiro consultarPorCpf(String cpf) {
+        if (consultarPorCpf(passageiro.getCpf()) != null) {
+            throw new CadastroDuplicadoException(
+                "Já existe um passageiro cadastrado com o CPF: "
+                + passageiro.getCpf()
+            );
+        }
 
-		for (Passageiro passageiro : passageiros) {
+        passageiros.add(passageiro);
+        return passageiro;
+    }
 
-			if (passageiro.getCpf().equals(cpf)) {
-				return passageiro;
-			}
-		}
+    public Passageiro consultarPorCpf(String cpf) {
 
-		return null;
-	}
+        for (Passageiro passageiro : passageiros) {
 
-	public List<Passageiro> listarTodos() {
-		return passageiros;
-	}
+            if (passageiro.getCpf().equals(cpf)) {
+                return passageiro;
+            }
+        }
+
+        return null;
+    }
+
+    public List<Passageiro> listarTodos() {
+        return passageiros;
+    }
 }

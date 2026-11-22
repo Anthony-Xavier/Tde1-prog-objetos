@@ -1,3 +1,4 @@
+
 package corrida;
 
 import categoria.CategoriaCorrida;
@@ -5,188 +6,222 @@ import entidade.Motorista;
 import entidade.Passageiro;
 import pagamento.FormaPagamento;
 import veiculo.Veiculo;
+import exceptions.MotoristaIndisponivelException;
+import exceptions.VeiculoIndisponivelException;
+import exceptions.TransicaoCorridaInvalidaException;
 
 public class Corrida {
 
-	private int id;
-	private Passageiro passageiro;
-	private Motorista motorista;
-	private Veiculo veiculo;
-	private String origem;
-	private String destino;
-	private double distanciaEstimada;
-	private CategoriaCorrida categoria;
-	private FormaPagamento formaPagamento;
-	private EstadoCorrida estado;
-	private double valorBase;
-	private double valorFinal;
-	private Avaliacao avaliacao;
+    private int id;
+    private Passageiro passageiro;
+    private Motorista motorista;
+    private Veiculo veiculo;
+    private String origem;
+    private String destino;
+    private double distanciaEstimada;
+    private CategoriaCorrida categoria;
+    private FormaPagamento formaPagamento;
+    private EstadoCorrida estado;
+    private double valorBase;
+    private double valorFinal;
+    private Avaliacao avaliacao;
 
-	public Corrida(int id, Passageiro passageiro, String origem, String destino,
-			double distanciaEstimada, CategoriaCorrida categoria, FormaPagamento formaPagamento) {
-		super();
-		if (passageiro == null) {
-			throw new IllegalArgumentException("Corrida precisa de um passageiro.");
-		}
-		if (distanciaEstimada <= 0) {
-			throw new IllegalArgumentException("Distância estimada deve ser maior que zero.");
-		}
-		if (categoria == null) {
-			throw new IllegalArgumentException("Corrida precisa de uma categoria.");
-		}
-		if (formaPagamento == null) {
-			throw new IllegalArgumentException("Corrida precisa de uma forma de pagamento.");
-		}
-		this.id = id;
-		this.passageiro = passageiro;
-		this.origem = origem;
-		this.destino = destino;
-		this.distanciaEstimada = distanciaEstimada;
-		this.categoria = categoria;
-		this.formaPagamento = formaPagamento;
-		this.estado = EstadoCorrida.SOLICITADA;
-	}
+    public Corrida(int id, Passageiro passageiro, String origem, String destino,
+            double distanciaEstimada, CategoriaCorrida categoria, FormaPagamento formaPagamento) {
+        super();
 
-	public int getId() {
-		return id;
-	}
+        if (passageiro == null) {
+            throw new IllegalArgumentException("Corrida precisa de um passageiro.");
+        }
 
-	public Passageiro getPassageiro() {
-		return passageiro;
-	}
+        if (distanciaEstimada <= 0) {
+            throw new IllegalArgumentException("Distância estimada deve ser maior que zero.");
+        }
 
-	public Motorista getMotorista() {
-		return motorista;
-	}
+        if (categoria == null) {
+            throw new IllegalArgumentException("Corrida precisa de uma categoria.");
+        }
 
-	public Veiculo getVeiculo() {
-		return veiculo;
-	}
+        if (formaPagamento == null) {
+            throw new IllegalArgumentException("Corrida precisa de uma forma de pagamento.");
+        }
 
-	public String getOrigem() {
-		return origem;
-	}
+        this.id = id;
+        this.passageiro = passageiro;
+        this.origem = origem;
+        this.destino = destino;
+        this.distanciaEstimada = distanciaEstimada;
+        this.categoria = categoria;
+        this.formaPagamento = formaPagamento;
+        this.estado = EstadoCorrida.SOLICITADA;
+    }
 
-	public String getDestino() {
-		return destino;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public double getDistanciaEstimada() {
-		return distanciaEstimada;
-	}
+    public Passageiro getPassageiro() {
+        return passageiro;
+    }
 
-	public CategoriaCorrida getCategoria() {
-		return categoria;
-	}
+    public Motorista getMotorista() {
+        return motorista;
+    }
 
-	public FormaPagamento getFormaPagamento() {
-		return formaPagamento;
-	}
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
 
-	public EstadoCorrida getEstado() {
-		return estado;
-	}
+    public String getOrigem() {
+        return origem;
+    }
 
-	public double getValorBase() {
-		return valorBase;
-	}
+    public String getDestino() {
+        return destino;
+    }
 
-	public double getValorFinal() {
-		return valorFinal;
-	}
+    public double getDistanciaEstimada() {
+        return distanciaEstimada;
+    }
 
-	public Avaliacao getAvaliacao() {
-		return avaliacao;
-	}
-	
-	public void aceitar(Motorista motorista) {
+    public CategoriaCorrida getCategoria() {
+        return categoria;
+    }
 
-		if (estado != EstadoCorrida.SOLICITADA) {
-			throw new IllegalStateException("Essa corrida não está mais disponível para ser aceita.");
-		}
+    public FormaPagamento getFormaPagamento() {
+        return formaPagamento;
+    }
 
-		if (motorista == null) {
-			throw new IllegalArgumentException("Nenhum motorista foi informado.");
-		}
+    public EstadoCorrida getEstado() {
+        return estado;
+    }
 
-		if (!motorista.isDisponivel()) {
-			throw new IllegalStateException("Esse motorista não está disponível no momento.");
-		}
+    public double getValorBase() {
+        return valorBase;
+    }
 
-		if (!categoria.isVeiculoCompativel(motorista.getVeiculo())) {
-			throw new IllegalStateException("O veículo desse motorista não é compatível com a categoria "
-					+ categoria.getNome() + ".");
-		}
+    public double getValorFinal() {
+        return valorFinal;
+    }
 
-		this.motorista = motorista;
-		this.veiculo = motorista.getVeiculo();
-		this.estado = EstadoCorrida.ACEITA;
+    public Avaliacao getAvaliacao() {
+        return avaliacao;
+    }
 
-		motorista.ficarIndisponivel();
+    public void aceitar(Motorista motorista) {
 
-		calcularValor();
-	}
+        if (estado != EstadoCorrida.SOLICITADA) {
+            throw new TransicaoCorridaInvalidaException(
+                "Essa corrida não está mais disponível para ser aceita."
+            );
+        }
 
-	private void calcularValor() {
-		valorBase = veiculo.calcularTarifaBase(distanciaEstimada);
+        if (motorista == null) {
+            throw new IllegalArgumentException(
+                "Nenhum motorista foi informado."
+            );
+        }
 
-		double valorComCategoria = categoria.aplicarAcrescimo(valorBase);
+        if (!motorista.isDisponivel()) {
+            throw new MotoristaIndisponivelException(
+                "Esse motorista não está disponível no momento."
+            );
+        }
 
-		valorFinal = formaPagamento.aplicarValor(valorComCategoria);
-	}
+        if (motorista.getVeiculo() == null) {
+            throw new VeiculoIndisponivelException(
+                "O motorista não possui um veículo vinculado."
+            );
+        }
 
-	public void iniciar() {
+        if (!categoria.isVeiculoCompativel(motorista.getVeiculo())) {
+            throw new IllegalStateException(
+                "O veículo desse motorista não é compatível com a categoria "
+                + categoria.getNome() + "."
+            );
+        }
 
-		if (estado != EstadoCorrida.ACEITA) {
-			throw new IllegalStateException("A corrida precisa ser aceita antes de ser iniciada.");
-		}
+        this.motorista = motorista;
+        this.veiculo = motorista.getVeiculo();
+        this.estado = EstadoCorrida.ACEITA;
 
-		this.estado = EstadoCorrida.EM_ANDAMENTO;
-	}
+        motorista.ficarIndisponivel();
 
-	public void finalizar() {
+        calcularValor();
+    }
 
-		if (estado != EstadoCorrida.EM_ANDAMENTO) {
-			throw new IllegalStateException("A corrida precisa estar em andamento para ser finalizada.");
-		}
+    private void calcularValor() {
 
-		this.estado = EstadoCorrida.FINALIZADA;
+        valorBase = veiculo.calcularTarifaBase(distanciaEstimada);
 
-		if (motorista != null) {
-			motorista.ficarDisponivel();
-		}
-	}
+        double valorComCategoria = categoria.aplicarAcrescimo(valorBase);
 
-	public void cancelar() {
+        valorFinal = formaPagamento.aplicarValor(valorComCategoria);
+    }
 
-		if (estado == EstadoCorrida.FINALIZADA) {
-			throw new IllegalStateException("Essa corrida já foi finalizada e não pode ser cancelada.");
-		}
+    public void iniciar() {
 
-		if (estado == EstadoCorrida.CANCELADA) {
-			throw new IllegalStateException("Essa corrida já foi cancelada.");
-		}
+        if (estado != EstadoCorrida.ACEITA) {
+            throw new TransicaoCorridaInvalidaException(
+                "A corrida precisa ser aceita antes de ser iniciada."
+            );
+        }
 
-		this.estado = EstadoCorrida.CANCELADA;
+        this.estado = EstadoCorrida.EM_ANDAMENTO;
+    }
 
-		if (motorista != null) {
-			motorista.ficarDisponivel();
-		}
-	}
+    public void finalizar() {
 
-	public void avaliar(Avaliacao avaliacao) {
+        if (estado != EstadoCorrida.EM_ANDAMENTO) {
+            throw new TransicaoCorridaInvalidaException(
+                "A corrida precisa estar em andamento para ser finalizada."
+            );
+        }
 
-		if (estado != EstadoCorrida.FINALIZADA) {
-			throw new IllegalStateException("Só é possível avaliar o motorista de uma corrida finalizada.");
-		}
+        this.estado = EstadoCorrida.FINALIZADA;
 
-		if (this.avaliacao != null) {
-			throw new IllegalStateException("Essa corrida já foi avaliada.");
-		}
+        if (motorista != null) {
+            motorista.ficarDisponivel();
+        }
+    }
 
-		this.avaliacao = avaliacao;
+    public void cancelar() {
 
-		motorista.adicionarAvaliacao(avaliacao);
-	}
+        if (estado == EstadoCorrida.FINALIZADA) {
+            throw new TransicaoCorridaInvalidaException(
+                "Essa corrida já foi finalizada e não pode ser cancelada."
+            );
+        }
 
+        if (estado == EstadoCorrida.CANCELADA) {
+            throw new TransicaoCorridaInvalidaException(
+                "Essa corrida já foi cancelada."
+            );
+        }
+
+        this.estado = EstadoCorrida.CANCELADA;
+
+        if (motorista != null) {
+            motorista.ficarDisponivel();
+        }
+    }
+
+    public void avaliar(Avaliacao avaliacao) {
+
+        if (estado != EstadoCorrida.FINALIZADA) {
+            throw new IllegalStateException(
+                "Só é possível avaliar o motorista de uma corrida finalizada."
+            );
+        }
+
+        if (this.avaliacao != null) {
+            throw new IllegalStateException(
+                "Essa corrida já foi avaliada."
+            );
+        }
+
+        this.avaliacao = avaliacao;
+
+        motorista.adicionarAvaliacao(avaliacao);
+    }
 }
