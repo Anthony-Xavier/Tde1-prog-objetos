@@ -8,6 +8,8 @@ import veiculo.Veiculo;
 
 public class Motorista extends Pessoa {
 
+	private static final long serialVersionUID = 1L;
+
 	private String cnh;
 	private boolean disponivel;
 	private Veiculo veiculo;

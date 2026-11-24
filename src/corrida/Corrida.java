@@ -1,6 +1,8 @@
 
 package corrida;
 
+import java.io.Serializable;
+
 import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import entidade.Passageiro;
@@ -10,7 +12,9 @@ import exceptions.MotoristaIndisponivelException;
 import exceptions.VeiculoIndisponivelException;
 import exceptions.TransicaoCorridaInvalidaException;
 
-public class Corrida {
+public class Corrida implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
     private int id;
     private Passageiro passageiro;

@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -14,15 +16,17 @@ import cadastro.CadastroMotoristas;
 import cadastro.CadastroPassageiros;
 import cadastro.CadastroVeiculos;
 import corrida.GerenciadorCorridas;
+import utils.Dados;
 
 /** Main application window. */
 public class MenuPrincipal extends Menu {
     private static final long serialVersionUID = 1L;
 
-    private final CadastroPassageiros cadastroPassageiros = new CadastroPassageiros();
-    private final CadastroMotoristas cadastroMotoristas = new CadastroMotoristas();
-    private final CadastroVeiculos cadastroVeiculos = new CadastroVeiculos();
-    private final GerenciadorCorridas gerenciadorCorridas = new GerenciadorCorridas();
+    private final Dados dados = Dados.ler();
+    private final CadastroPassageiros cadastroPassageiros = dados.getCadastroPassageiros();
+    private final CadastroMotoristas cadastroMotoristas = dados.getCadastroMotoristas();
+    private final CadastroVeiculos cadastroVeiculos = dados.getCadastroVeiculos();
+    private final GerenciadorCorridas gerenciadorCorridas = dados.getGerenciadorCorridas();
 
     public MenuPrincipal() {
         super("Sistema de transporte");
@@ -50,6 +54,13 @@ public class MenuPrincipal extends Menu {
         painel.add(centro, BorderLayout.CENTER);
         setContentPane(painel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dados.gravar();
+            }
+        });
         setSize(560, 390);
         setLocationRelativeTo(null);
     }

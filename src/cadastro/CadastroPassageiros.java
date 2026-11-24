@@ -1,12 +1,16 @@
 package cadastro;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import entidade.Passageiro;
 import exceptions.CadastroDuplicadoException;
 
-public class CadastroPassageiros {
+public class CadastroPassageiros implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
     private List<Passageiro> passageiros = new ArrayList<>();
 

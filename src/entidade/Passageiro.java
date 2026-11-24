@@ -7,6 +7,8 @@ import corrida.Corrida;
 
 public class Passageiro extends Pessoa {
 
+	private static final long serialVersionUID = 1L;
+
 	private List<Corrida> historico = new ArrayList<>();
 
 	public Passageiro(String nome, String cpf, String telefone) {

@@ -1,5 +1,7 @@
 package cadastro;
 
+import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +10,9 @@ import entidade.Motorista;
 import veiculo.Veiculo;
 import exceptions.CadastroDuplicadoException;
 
-public class CadastroMotoristas {
+public class CadastroMotoristas implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
     private List<Motorista> motoristas = new ArrayList<>();
 

@@ -2,6 +2,8 @@ package veiculo;
 
 public class Van extends Veiculo {
 
+	private static final long serialVersionUID = 1L;
+
 	public Van(String placa, String modelo) {
 		super(placa, modelo);
 	}
