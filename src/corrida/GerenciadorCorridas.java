@@ -9,121 +9,132 @@ import categoria.CategoriaCorrida;
 import entidade.Motorista;
 import entidade.Passageiro;
 import pagamento.FormaPagamento;
+import exceptions.CorridaNaoEncontradaException;
 
 public class GerenciadorCorridas implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Corrida> corridas = new ArrayList<>();
-	private int proximoId = 1;
+    private List<Corrida> corridas = new ArrayList<>();
+    private int proximoId = 1;
 
-	public Corrida solicitarCorrida(
-			Passageiro passageiro,
-			String origem,
-			String destino,
-			double distanciaEstimada,
-			CategoriaCorrida categoria,
-			FormaPagamento formaPagamento) {
+    public Corrida solicitarCorrida(
+            Passageiro passageiro,
+            String origem,
+            String destino,
+            double distanciaEstimada,
+            CategoriaCorrida categoria,
+            FormaPagamento formaPagamento) {
 
-		Corrida corrida = new Corrida(
-				proximoId,
-				passageiro,
-				origem,
-				destino,
-				distanciaEstimada,
-				categoria,
-				formaPagamento
-		);
+        Corrida corrida = new Corrida(
+                proximoId,
+                passageiro,
+                origem,
+                destino,
+                distanciaEstimada,
+                categoria,
+                formaPagamento
+        );
 
-		corridas.add(corrida);
-		passageiro.adicionarCorrida(corrida);
-		proximoId++;
+        corridas.add(corrida);
+        passageiro.adicionarCorrida(corrida);
+        proximoId++;
 
-		return corrida;
-	}
+        return corrida;
+    }
 
-	public Corrida buscarPorId(int id) {
+    public Corrida buscarPorId(int id) {
 
-		for (Corrida corrida : corridas) {
+        for (Corrida corrida : corridas) {
 
-			if (corrida.getId() == id) {
-				return corrida;
-			}
-		}
+            if (corrida.getId() == id) {
+                return corrida;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public void aceitarCorrida(int id, Motorista motorista) {
+    public void aceitarCorrida(int id, Motorista motorista) {
 
-		Corrida corrida = buscarPorId(id);
+        Corrida corrida = buscarPorId(id);
 
-		if (corrida == null) {
-			throw new IllegalArgumentException("Corrida não encontrada.");
-		}
+        if (corrida == null) {
+            throw new CorridaNaoEncontradaException(
+                "Corrida não encontrada. ID: " + id
+            );
+        }
 
-		corrida.aceitar(motorista);
-	}
+        corrida.aceitar(motorista);
+    }
 
-	public void iniciarCorrida(int id) {
+    public void iniciarCorrida(int id) {
 
-		Corrida corrida = buscarPorId(id);
+        Corrida corrida = buscarPorId(id);
 
-		if (corrida == null) {
-			throw new IllegalArgumentException("Corrida não encontrada.");
-		}
+        if (corrida == null) {
+            throw new CorridaNaoEncontradaException(
+                "Corrida não encontrada. ID: " + id
+            );
+        }
 
-		corrida.iniciar();
-	}
+        corrida.iniciar();
+    }
 
-	public void finalizarCorrida(int id) {
+    public void finalizarCorrida(int id) {
 
-		Corrida corrida = buscarPorId(id);
+        Corrida corrida = buscarPorId(id);
 
-		if (corrida == null) {
-			throw new IllegalArgumentException("Corrida não encontrada.");
-		}
+        if (corrida == null) {
+            throw new CorridaNaoEncontradaException(
+                "Corrida não encontrada. ID: " + id
+            );
+        }
 
-		corrida.finalizar();
-	}
+        corrida.finalizar();
+    }
 
-	public void cancelarCorrida(int id) {
+    public void cancelarCorrida(int id) {
 
-		Corrida corrida = buscarPorId(id);
+        Corrida corrida = buscarPorId(id);
 
-		if (corrida == null) {
-			throw new IllegalArgumentException("Corrida não encontrada.");
-		}
+        if (corrida == null) {
+            throw new CorridaNaoEncontradaException(
+                "Corrida não encontrada. ID: " + id
+            );
+        }
 
-		corrida.cancelar();
-	}
+        corrida.cancelar();
+    }
 
-	public void avaliarMotorista(int id, Avaliacao avaliacao) {
+    public void avaliarMotorista(int id, Avaliacao avaliacao) {
 
-		Corrida corrida = buscarPorId(id);
+        Corrida corrida = buscarPorId(id);
 
-		if (corrida == null) {
-			throw new IllegalArgumentException("Corrida não encontrada.");
-		}
+        if (corrida == null) {
+            throw new CorridaNaoEncontradaException(
+                "Corrida não encontrada. ID: " + id
+            );
+        }
 
-		corrida.avaliar(avaliacao);
-	}
+        corrida.avaliar(avaliacao);
+    }
 
-	public List<Corrida> listarPorEstado(EstadoCorrida estado) {
+    public List<Corrida> listarPorEstado(EstadoCorrida estado) {
 
-		List<Corrida> resultado = new ArrayList<>();
+        List<Corrida> resultado = new ArrayList<>();
 
-		for (Corrida corrida : corridas) {
+        for (Corrida corrida : corridas) {
 
-			if (corrida.getEstado() == estado) {
-				resultado.add(corrida);
-			}
-		}
+            if (corrida.getEstado() == estado) {
+                resultado.add(corrida);
+            }
+        }
 
-		return resultado;
-	}
+        return resultado;
+    }
 
-	public List<Corrida> listarTodas() {
-		return corridas;
-	}
+    public List<Corrida> listarTodas() {
+        return corridas;
+    }
 }
